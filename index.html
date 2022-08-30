@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interview</title>
+</head>
+
+<body>
+  <div>
+    <button id="start">开始游戏</button>
+    <button id="reset">重置游戏</button>
+  </div>
+  <script>
+    const start = document.querySelector('#start');
+    const reset = document.querySelector('#reset');
+    start.addEventListener('click', startGame);
+    reset.addEventListener('click', resetGame);
+
+    const originalArr = [3, 5, 7];
+    let arr = originalArr.slice();
+    let player = 1;
+    // 初始玩家拿取随机的堆序号
+    let index = getTakeIndex(arr);
+    // 随机取得拿取的堆序号
+    function getTakeIndex(arr) {
+      return Math.floor(Math.random() * arr.length);
+    }
+    function startGame() {
+      while (true) {
+        const result = prompt(`请输入${player}号玩家拿取的数量，取值范围：1--${arr[index]}`);
+        console.log('result===:', result);
+        if (result === null) {
+          // 点击取消，则重置游戏
+          resetGame();
+          break;
+        }
+        // 输入的是非数字的值或者是小数或者超越堆的数量界限
+        if (Number.isNaN(Number(result)) || result.includes('.') || (result < 1 || result > arr[index])) {
+          alert('请输入正确的数量!');
+          continue;
+        }
+        arr[index] -= Number(result);
+        if (arr[index] == 0) {
+          arr.splice(index, 1);
+        }
+        if (arr.length > 0) {
+          player = player == 1 ? 2 : 1;
+          // 拿取生效后重新计算下次随机拿取的堆序号
+          index = getTakeIndex(arr);
+        } else {
+          // 拿完了,将开始游戏按钮置为不可点击状态
+          start.setAttribute('disabled', true);
+          break;
+        }
+      }
+      if (!arr.length) {
+        alert(`${player}号玩家输了!`);
+      }
+    }
+    // 重置游戏
+    function resetGame() {
+      arr = originalArr.slice();
+      player = 1;
+      index = getTakeIndex(arr);
+      start.removeAttribute('disabled');
+    }
+  </script>
+</body>
+
+</html>
